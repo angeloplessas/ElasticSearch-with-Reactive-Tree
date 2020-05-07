@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import PinchZoomPan from 'pinch-zoom-pan';
 import { IFamilyNode, IFamilyExtNode } from '../../moduleChange/relatives-tree';
 import ReactFamilyTree from 'react-family-tree';
@@ -13,12 +13,18 @@ type IState = {
   nodes: object;
 }
 
-export const Apptree = ({ myID, nodes }: IState) => {  
+export const Apptree = ({ myID, nodes }: IState) => { 
   
   const [rootId, setRootId] = useState(myID);
-  const onResetClick = useCallback(() => setRootId(myID), [
-    console.log("Apptree: ", "\nrootId=", rootId, " myID=", myID, " nodes=", nodes)
-  ]);
+  const [rootNodes, setRootNode] = useState(nodes);
+  const onResetClick = React.useCallback(() => {
+    setRootId(myID);
+    setRootNode(nodes);
+  }, [myID, nodes]);
+  useEffect(() => {
+    setRootId(myID);
+    setRootNode(nodes);
+  }, [myID, nodes]);
 
   return (
     <div className={styles.apptree}>      
@@ -30,9 +36,8 @@ export const Apptree = ({ myID, nodes }: IState) => {
           className={styles.wrapper}
         >
           <ReactFamilyTree
-            nodes={nodes as IFamilyNode[]}
-            rootId={myID}
-            // rootId="root"
+            nodes={rootNodes as IFamilyNode[]}
+            rootId={rootId}
             width={WIDTH}
             height={HEIGHT}
             canvasClassName={styles.tree}
@@ -40,7 +45,7 @@ export const Apptree = ({ myID, nodes }: IState) => {
               <FamilyNode
                 key={node.id}
                 node={node}
-                isRoot={node.id === myID}
+                isRoot={node.id === rootId}
                 onSubClick={setRootId}
                 style={{
                   width: WIDTH,
@@ -51,11 +56,11 @@ export const Apptree = ({ myID, nodes }: IState) => {
             )}
           />
         </PinchZoomPan>
-        {/* {rootId !== myID && (
+        {rootId !== myID && (
           <div className={styles.reset} onClick={onResetClick}>
             Reset
           </div>
-        )} */}
+        )}
     </div>
   );
 }

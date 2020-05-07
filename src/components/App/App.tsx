@@ -11,7 +11,7 @@ import {
 // const myID = 'root';
 
 import nodes from '../../assests/familyData/mePhoto.json';
-const myID = 'mine';
+const myID = 'wife';
 
 const AppSearcher = () => {
 	const [newNodes, setNodes] = useState(nodes);
@@ -40,8 +40,10 @@ const AppSearcher = () => {
 	};
 
 	const onUpdate = (data: any) => {
-		console.log("data: ", data);
-		// return;
+		if(!data.data.length) {
+			console.log("returned!");
+			return;
+		}
 		let prenodes = makeNodes(data);		
 		function makeNodes(data: any) {			
 			let preData = data.data, lenData = preData.length;
@@ -55,18 +57,60 @@ const AppSearcher = () => {
 			}			
 			return prenodes;
 		}
-		let preid = prenodes[0]["id"];
-		console.log("preid: ", typeof(preid), preid, "\nprenodes: ", prenodes);
-		// return;
+		function checknode(keyword:string, set:object) {
+			let checked = 0;
+			if(Object.values(set).indexOf(keyword) > -1) {
+				checked = 1;
+			} else {
+				checked = 0;
+			}
+			return checked;
+		}
+		let preid, preids=[], firstId=prenodes[0]["id"];
+		for(let i = 0; i < prenodes.length; i++) {
+			preids.push(prenodes[i]["id"]);
+		}		
+		for(let i = 0; i < preids.length; i++) {
+			preid = preids[i];
+			let checkingKey = ["parents", "siblings", "spouses", "children"], isCnt = 1, nodeNum = 0;
+			for(let k = 0; k < checkingKey.length; k++) {
+				let cntKey = checkingKey[k];
+				if(prenodes[i][cntKey].length) {
+					nodeNum += prenodes[i][cntKey].length;
+					for(let j = 0; j < prenodes[i][cntKey].length; j++) {
+						let checkid = prenodes[i][cntKey][j]["id"];
+						isCnt = checknode(checkid, preids);
+						if(isCnt) {
+							continue;
+						} else {
+							break;
+						}
+					}
+				} else {
+					isCnt = 1;
+				}
+				if(isCnt) {
+					continue;
+				} else {
+					break;
+				}
+			}
+			if(isCnt && nodeNum) {
+				break;
+			} else {
+				nodeNum = 0;
+				continue;
+			}	
+		}	
 		if(prenodes[0]["family_code"] == "390822") {
+			console.log("Checked Preid:", preid, firstId, prenodes);
 			setNodes(prenodes);
-			setID(preid);
-			console.log("current ID and nodes: ", newID, newNodes);
+			// setID(preid);
+			setID(preids[7]);
 		} else {
 			setNodes(nodes);
 			setID(myID);
-			console.log("current ID and nodes: ", newID, newNodes);
-		}		
+		}	
 	}
 
 	return (
