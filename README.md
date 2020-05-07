@@ -1,5 +1,7 @@
 # ElasticSearch with React-Family-tree
 
+* This project was creaetd with TypeScript using these modules below for rendering family photos or the other infos.
+
 ## Modules
 
 * [@appbase/reactivesearch](https://www.npmjs.com/package/@appbaseio/reactivesearch)
