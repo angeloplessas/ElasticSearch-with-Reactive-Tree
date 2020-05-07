@@ -1,6 +1,6 @@
 # ElasticSearch with React-Family-tree
 
-* This project was creaetd with TypeScript using these modules below for rendering family photos or the other infos.
+* This project was created with TypeScript using these modules below for rendering family photos or the other infos.
 
 ## Modules
 
